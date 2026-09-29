@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  registration-service:
+    build:
+      context: ./registration-service
+      dockerfile: Dockerfile
+    container_name: registration-service-container
+    restart: always
+    ports:
+      - "${PORT_REGISTRATION:-5001}:5001"
+    environment:
+      - PORT=5001
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+    networks:
+      - app-network
+
+  login-service:
+    build:
+      context: ./login-service
+      dockerfile: Dockerfile
+    container_name: login-service-container
+    restart: always
+    ports:
+      - "${PORT_LOGIN:-5002}:5002"
+    environment:
+      - PORT=5002
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
