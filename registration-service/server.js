@@ -9,7 +9,7 @@ app.use(express.json());
 
 // User Schema
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  name: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   email: String,
   createdAt: { type: Date, default: Date.now }
@@ -27,21 +27,21 @@ app.get('/', (req, res) => {
 
 app.post('/register', async (req, res) => {
   try {
-    const { username, password, email } = req.body;
-    if (!username || !password) {
+    const { name, password, email } = req.body;
+    if (!name || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
 
     if (mongoose.connection.readyState === 1) {
-      const existingUser = await User.findOne({ username });
+      const existingUser = await User.findOne({ name });
       if (existingUser) {
         return res.status(400).json({ error: 'User already exists' });
       }
-      const user = new User({ username, password, email });
+      const user = new User({ name, password, email });
       await user.save();
-      return res.status(201).json({ message: 'User registered successfully', user: { id: user._id, username, email } });
+      return res.status(201).json({ message: 'User registered successfully', user: { id: user._id, name, email } });
     } else {
-      return res.status(201).json({ message: 'User registered (In-Memory mode)', user: { username, email } });
+      return res.status(201).json({ message: 'User registered (In-Memory mode)', user: { name, email } });
     }
   } catch (err) {
     res.status(500).json({ error: err.message });

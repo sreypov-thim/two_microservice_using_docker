@@ -9,7 +9,7 @@ app.use(express.json());
 
 // User Schema
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true },
+  name: { type: String, required: true },
   password: { type: String, required: true },
   email: String
 });
@@ -26,19 +26,19 @@ app.get('/', (req, res) => {
 
 app.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password) {
+    const { name, password } = req.body;
+    if (!name || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
 
     if (mongoose.connection.readyState === 1) {
-      const user = await User.findOne({ username, password });
+      const user = await User.findOne({ name, password });
       if (!user) {
         return res.status(401).json({ error: 'Invalid username or password' });
       }
-      return res.json({ message: 'Login successful', user: { id: user._id, username: user.username, email: user.email } });
+      return res.json({ message: 'Login successful', user: { id: user._id, name: user.name, email: user.email } });
     } else {
-      return res.json({ message: 'Login successful (In-Memory mode)', user: { username } });
+      return res.json({ message: 'Login successful (In-Memory mode)', user: { name } });
     }
   } catch (err) {
     res.status(500).json({ error: err.message });
